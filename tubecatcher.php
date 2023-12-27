@@ -12,7 +12,7 @@
  * Text Domain: tubecatcher
  */
 
-defined('ABBSPATH') or die("Hey, you can't access this file, you silly human");
+defined('ABSPATH') or die("Hey, you can't access this file, you silly human");
 
 // autoload the composer
 if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
@@ -28,13 +28,13 @@ if (!class_exists('TubeCatcher')) {
         public function __construct()
         {
             //shortcode
-            add_shortcode('TubeCatcher', [$this, 'shortcode']);
+            add_shortcode('tubecatcher', [$this, 'shortcode']);
         }
 
         /**
          * a method responsible to get values from shortcode and display
          *
-         * @return void
+         * @return string
          */
         public function shortcode($atts)
         {
@@ -45,7 +45,7 @@ if (!class_exists('TubeCatcher')) {
                         'text' => 'Get',
                     ],
                     $atts,
-                    'TubeCatcher'
+                    'tubecatcher'
                 )
             );
             $this->render_shortcode_html($text);
@@ -110,7 +110,7 @@ if (!class_exists('TubeCatcher')) {
             }
             return $link;
         }
-    }
+    } // class ends here
 
     // initialize the class
     new TubeCatcher();
