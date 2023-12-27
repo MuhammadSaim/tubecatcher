@@ -1,0 +1,20 @@
+{
+    "name": "muhammadsaim/tubecatcher",
+    "description": "A wordpress plugin to download videos from the youtube",
+    "type": "project",
+    "license": "GLP2+",
+    "autoload": {
+        "psr-4": {
+            "Muhammadsaim\\Tubecatcher\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Muhammad Saim",
+            "email": "muhammadsaim494@gmail.com"
+        }
+    ],
+    "require": {
+        "athlon1600/youtube-downloader": "^4.0"
+    }
+}
