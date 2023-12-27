@@ -1,0 +1,7 @@
+# IDE and Editors
+.idea
+.vscode
+.history
+
+# composer
+vendor
