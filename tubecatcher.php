@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * Plugin Name: TubeCatcher
  * Version: 0.1.0
@@ -19,9 +21,15 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
     require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
+
+
 if (!class_exists('TubeCatcher')) {
+    
+
     class TubeCatcher
     {
+        
+
         /**
          * a constructor to initialize the files
          */
@@ -30,6 +38,8 @@ if (!class_exists('TubeCatcher')) {
             //shortcode
             add_shortcode('tubecatcher', [$this, 'shortcode']);
         }
+
+        
 
         /**
          * a method responsible to get values from shortcode and display
@@ -52,6 +62,9 @@ if (!class_exists('TubeCatcher')) {
             return ob_get_clean();
         }
 
+
+
+
         /**
          * render the form and the other divs
          *
@@ -61,30 +74,30 @@ if (!class_exists('TubeCatcher')) {
         public function render_shortcode_html($text)
         {
             // css
-            wp_enqueue_style('mc-youtube-video-downloader-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', [], null, 'all');
-            wp_enqueue_style('mc-youtube-video-downloader-style', dirname(__FILE__) . 'assets/css/style.css', [], null, 'all');
+            wp_enqueue_style('tubecatcher-bootstrap-style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', [], null, 'all');
+            wp_enqueue_style('tubecatcher-style', plugins_url('assets/css/style.css', __FILE__), [], null, 'all');
             // js
-            wp_enqueue_script('mona-youtube-video-downloader-bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', [], true);
-            wp_enqueue_script('mona-youtube-video-downloader-script', dirname(__FILE__) . 'assets/js/script.js', ['jquery'], true);
+            wp_enqueue_script('tubecatcher-bootstrap-script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', [], true);
+            wp_enqueue_script('tubecatcher-script', plugins_url('assets/js/script.js', __FILE__), ['jquery'], true);
             ?>
-<div class="container">
-    <div class="card shadow">
-        <div class="card-body">
-            <div class="card-title">YouTube video downloader</div>
-            <form method="post" action="" class="yt-video-downloader-ajax-form">
+<div class="container tubecatcher-container">
+    <div class="card shadow tubecatcher-card">
+        <div class="card-body tubecatcher-card-body">
+            <div class="card-title tubecatcher-card-title">YouTube video downloader</div>
+            <form method="post" action="" class="tubecatcher-ajax-form">
                 <div class="mb-3">
-                    <label for="yt_video_url yt-video-downloader-label">YouTube Link</label>
-                    <input type="url" name="yt_video_url" class="form-control yt-video-downloader-input"
+                    <label for="tubecatcher_video_url" class="tubecatcher-form-label">YouTube Link</label>
+                    <input type="url" name="tubecatcher_video_url" class="form-control tubecatcher-input"
                         placeholder="https://www.youtube.com/watch?v=jADTdg-o8i0">
                 </div>
                 <div class="mb-3">
-                    <button type="submit" class="btn btn-danger yt-video-downloader-btn">Get Video</button>
+                    <button type="submit" class="btn btn-danger tubecatcher-card-btn">Get Video</button>
                 </div>
             </form>
         </div>
     </div>
     <!-- video info box -->
-    <div class="card shodow mt-5 yt-video-downloader-info-box">
+    <div class="card shodow mt-5 tubecatcher-card-info-box">
         <div class="row">
             <div class="col-md-4 col-sm-12">
                 <img src="" alt="">
@@ -95,6 +108,9 @@ if (!class_exists('TubeCatcher')) {
 </div>
 <?php
         }
+
+
+
 
         /**
          * extract youtube video id from the youtube vide URL
@@ -110,9 +126,13 @@ if (!class_exists('TubeCatcher')) {
             }
             return $link;
         }
+
+
     } // class ends here
+
 
     // initialize the class
     new TubeCatcher();
+
+
 }// class check if ends here
-?>
