@@ -5,7 +5,7 @@
     "license": "GLP2+",
     "autoload": {
         "psr-4": {
-            "Muhammadsaim\\Tubecatcher\\": "src/"
+            "TubeCatcher\\": "src/"
         }
     },
     "authors": [
@@ -15,6 +15,7 @@
         }
     ],
     "require": {
-        "athlon1600/youtube-downloader": "^4.0"
+        "athlon1600/youtube-downloader": "^4.0",
+        "athlon1600/php-curl-client": "^1.0"
     }
 }

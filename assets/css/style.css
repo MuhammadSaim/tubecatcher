@@ -1,8 +1,12 @@
-.mc-youtube-video-downloader-btn {
-  color: white;
-  background-color: rgb(211, 58, 58);
+.tubecatcher-fa-youtube{
+  color: #FF0000;
 }
 
-.mc-youtube-video-downloader-h1 {
-  color: red;
+.tubecatcher-fa-2x{
+  font-size: 1.2em;
+}
+
+.tubecatcher-channel-name{
+  font-size: 12px;
+  font-weight: bold;
 }

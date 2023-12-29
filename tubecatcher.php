@@ -14,7 +14,19 @@
  * Text Domain: tubecatcher
  */
 
+
+use TubeCatcher\GetVideoInfo;
+use TubeCatcher\VideoDownloader;
+
+
 defined('ABSPATH') or die("Hey, you can't access this file, you silly human");
+
+
+// require config files
+if (file_exists(dirname(__FILE__) . '/tubecatcher-constants.php')) {
+    require_once dirname(__FILE__) . '/tubecatcher-constants.php';
+}
+
 
 // autoload the composer
 if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
@@ -37,8 +49,20 @@ if (!class_exists('TubeCatcher')) {
         {
             //shortcode
             add_shortcode('tubecatcher', [$this, 'shortcode']);
+
+            // This is for authenticated users
+            add_action('wp_ajax_send_form', [$this, 'ajax_form']);
+
+            // This is for unauthenticated users.
+            add_action('wp_ajax_nopriv_send_form', [$this, 'ajax_form']);
+
         }
 
+
+        public function ajax_form()
+        {
+            // code...
+        }
         
 
         /**
@@ -75,16 +99,21 @@ if (!class_exists('TubeCatcher')) {
         {
             // css
             wp_enqueue_style('tubecatcher-bootstrap-style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', [], null, 'all');
+            wp_enqueue_style('tubecatcher-fontawesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], null, 'all');
             wp_enqueue_style('tubecatcher-style', plugins_url('assets/css/style.css', __FILE__), [], null, 'all');
             // js
             wp_enqueue_script('tubecatcher-bootstrap-script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', [], true);
             wp_enqueue_script('tubecatcher-script', plugins_url('assets/js/script.js', __FILE__), ['jquery'], true);
+
+            $video_data = (new VideoDownloader())->fetchDownloadLinks('https://www.youtube.com/watch?v=jADTdg-o8i0');
+            var_dump($video_data);
+            wp_die();
             ?>
 <div class="container tubecatcher-container">
     <div class="card shadow tubecatcher-card">
         <div class="card-body tubecatcher-card-body">
             <div class="card-title tubecatcher-card-title">YouTube video downloader</div>
-            <form method="post" action="" class="tubecatcher-ajax-form">
+            <form name="tubecatcher-ajax-form" method="post" action="" class="tubecatcher-ajax-form">
                 <div class="mb-3">
                     <label for="tubecatcher_video_url" class="tubecatcher-form-label">YouTube Link</label>
                     <input type="url" name="tubecatcher_video_url" class="form-control tubecatcher-input"
@@ -97,10 +126,21 @@ if (!class_exists('TubeCatcher')) {
         </div>
     </div>
     <!-- video info box -->
-    <div class="card shodow mt-5 tubecatcher-card-info-box">
-        <div class="row">
-            <div class="col-md-4 col-sm-12">
-                <img src="" alt="">
+    <div class="container">
+        <div class="card shodow mt-5 tubecatcher-card-info-box">
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <img src="<?= $video_data['thumbnail'] ?>" alt="<?= $video_data['title'] ?> thumbnail" class="img-fluid rounded-start tubecatcher-video-image"/>
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <div class="card-body">
+                        <h5 class="text-break fw-bold"><?= $video_data['title'] ?></h3>
+                        <div class="d-flex align-items-center">
+                            <i class="fab fa-youtube tubecatcher-fa-2x tubecatcher-fa-youtube me-2"></i>
+                            <span class="tubecatcher-channel-name"><?= $video_data['channel_name'] ?></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
