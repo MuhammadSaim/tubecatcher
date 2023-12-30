@@ -63,7 +63,7 @@ class GetVideoInfo {
 
 			$data = json_decode(json_encode(json_decode($body)), true);
 
-			if(!isset($data['items']) && count($data['items']) < 0){
+			if(count($data['items']) <= 0){
 				return [];
 			}
 			

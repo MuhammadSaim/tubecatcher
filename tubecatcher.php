@@ -47,21 +47,28 @@ if (!class_exists('TubeCatcher')) {
          */
         public function __construct()
         {
+
+        
+
             //shortcode
             add_shortcode('tubecatcher', [$this, 'shortcode']);
 
             // This is for authenticated users
-            add_action('wp_ajax_send_form', [$this, 'ajax_form']);
+            add_action('wp_ajax_tubecathcer_ajax_form_action', [$this, 'tubecatcher_ajax_form']);
 
             // This is for unauthenticated users.
-            add_action('wp_ajax_nopriv_send_form', [$this, 'ajax_form']);
+            add_action('wp_ajax_nopriv_tubecathcer_ajax_form_action', [$this, 'tubecatcher_ajax_form']);
+
 
         }
 
 
-        public function ajax_form()
+        public function tubecatcher_ajax_form()
         {
-            // code...
+            echo json_encode([
+                "message" => "Working"
+            ]);
+            wp_die();
         }
         
 
@@ -97,6 +104,7 @@ if (!class_exists('TubeCatcher')) {
          */
         public function render_shortcode_html($text)
         {
+
             // css
             wp_enqueue_style('tubecatcher-bootstrap-style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', [], null, 'all');
             wp_enqueue_style('tubecatcher-fontawesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], null, 'all');
@@ -104,10 +112,14 @@ if (!class_exists('TubeCatcher')) {
             // js
             wp_enqueue_script('tubecatcher-bootstrap-script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', [], true);
             wp_enqueue_script('tubecatcher-script', plugins_url('assets/js/script.js', __FILE__), ['jquery', 'tubecatcher-bootstrap-script'], true);
+            // wp localization
+            wp_localize_script( 'tubecatcher-script', 'tubecatcher_ajax', [
+                'admin_ajax_url' => admin_url('admin-ajax.php')
+            ]);
 
-            $video_data = (new VideoDownloader())->fetchDownloadLinks('https://www.youtube.com/watch?v=jADTdg-o8i0');
-            var_dump($video_data);
-            wp_die();
+            $video_data = (new GetVideoInfo())->getInfo($this->get_youtube_id('https://www.youtube.com/watch?v=jADTdg-o8i0'));
+            // var_dump($video_data);
+            // wp_die();
             ?>
 <div class="container tubecatcher-container">
     <div class="card shadow tubecatcher-card">
