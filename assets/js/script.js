@@ -9,13 +9,18 @@ jQuery(document).ready(function ($) {
     const data = $(this).serializeArray();
     
 
+    data.push({
+      name: 'action',
+      value: 'tubecathcer_ajax_form_action'
+    });
+
+    console.log(data);
+
     // sending ajax request
     $.ajax({
       url: tubecatcher_ajax.admin_ajax_url,
       method: 'POST',
-      data: {
-        action: 'tubecathcer_ajax_form_action'
-      },
+      data: data,
       success: (data) => {
         console.log(data);
       }

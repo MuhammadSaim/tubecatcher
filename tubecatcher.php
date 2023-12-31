@@ -42,13 +42,15 @@ if (!class_exists('TubeCatcher')) {
     {
         
 
+        private $youtube_video_info;
+        private $youtube_downloader;
+
+
         /**
          * a constructor to initialize the files
          */
         public function __construct()
         {
-
-        
 
             //shortcode
             add_shortcode('tubecatcher', [$this, 'shortcode']);
@@ -60,16 +62,88 @@ if (!class_exists('TubeCatcher')) {
             add_action('wp_ajax_nopriv_tubecathcer_ajax_form_action', [$this, 'tubecatcher_ajax_form']);
 
 
+            // initiate the youtube video info
+            $this->youtube_video_info = new GetVideoInfo();
+
+            // initiate the youtube video downloader
+            $this->youtube_downloader = new VideoDownloader();
+
+
         }
 
+
+        /**
+         *
+         *
+         * a ajax handler which handle the ajax request and validate the request 
+         * and send the response back to the form
+         * 
+         * 
+         */
 
         public function tubecatcher_ajax_form()
         {
-            echo json_encode([
-                "message" => "Working"
-            ]);
-            wp_die();
+
+            // check request is comming from the valid source
+
+            if ( 
+                ! isset( $_POST['tubecatcher_nonce_field'] ) 
+                || ! wp_verify_nonce( $_POST['tubecatcher_nonce_field'], 'tubecatcher_action_nonce') 
+            ) {
+
+                echo json_encode([
+                    'error' => true,
+                    'error_type' => 'message',
+                    'message' => "Something went wrong please try again."
+                ]);
+                wp_die();
+
+            }
+
+
+            // simple field validation to check field is empty or not
+
+            if(isset($_POST["tubecatcher_video_url"]) && !empty($_POST["tubecatcher_video_url"])){
+
+            
+            // find out this is the valid url
+            if(filter_var($_POST["tubecatcher_video_url"], FILTER_VALIDATE_URL)){
+
+
+                // now check url is valid youtube url
+                if($this->validateYouTubeUrl($_POST["tubecatcher_video_url"])){
+
+                }else{
+                    echo json_encode([
+                        "error" => true,
+                        "error_type" => 'field',
+                        "message" => "Please provide a valid YouTube URL."
+                    ]);
+                    wp_die();   
+                }
+
+
+            }else{
+                echo json_encode([
+                    "error" => true,
+                    "error_type" => 'field',
+                    "message" => "Please provide a valid URL."
+                ]);
+                wp_die();
+            }
+
+
+            }else{
+                echo json_encode([
+                    "error" => true,
+                    "error_type" => 'field',
+                    "message" => "Please provide the YouTube video URL."
+                ]);
+                wp_die();
+            }
+
         }
+
         
 
         /**
@@ -178,6 +252,25 @@ if (!class_exists('TubeCatcher')) {
                 return $id = $id[0];
             }
             return $link;
+        }
+
+
+        /**
+         * 
+         * check the given url is valid youtube url or not
+         * 
+         * @param  $url youtube url
+         * @return True if valid otherwise false
+         * 
+         */
+        public function validateYouTubeUrl($url)
+        {
+            $url_parsed_arr = parse_url($yt_url);
+           if ($url_parsed_arr['host'] == "www.youtube.com" && $url_parsed_arr['path'] == "/watch" && substr($url_parsed_arr['query'], 0, 2) == "v=" && substr($url_parsed_arr['query'], 2) != "") {
+                return true;
+           } else {
+               return false;
+           }
         }
 
 
