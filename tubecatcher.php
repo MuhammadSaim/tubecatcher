@@ -113,6 +113,36 @@ if (!class_exists('TubeCatcher')) {
                 // now check url is valid youtube url
                 if($this->validateYouTubeUrl($_POST["tubecatcher_video_url"])){
 
+
+                    // get the video info 
+                    $video_info = $this->youtube_video_info->getInfo($this->get_youtube_id(($_POST["tubecatcher_video_url"])));
+
+                    // get youtube video downloadable links
+                    $download_links = $this->youtube_downloader->fetchDownloadLinks($_POST["tubecatcher_video_url"]);
+                    
+
+                    // check found any data for the video
+                    if(count($video_info) > 0 && count($download_links) > 0){
+
+                        $video_info['download_links'] = $download_links;
+
+                        echo json_encode([
+                            "error" => false,
+                            "data"  => $video_info
+                        ]);
+
+                        wp_die();
+
+                    }else{
+                        echo json_encode([
+                            "error" => true,
+                            "error_type" => 'message',
+                            "message" => "Not able to fetch video's details, try another one."
+                        ]);
+                        wp_die();
+                    }
+
+
                 }else{
                     echo json_encode([
                         "error" => true,
@@ -265,12 +295,8 @@ if (!class_exists('TubeCatcher')) {
          */
         public function validateYouTubeUrl($url)
         {
-            $url_parsed_arr = parse_url($yt_url);
-           if ($url_parsed_arr['host'] == "www.youtube.com" && $url_parsed_arr['path'] == "/watch" && substr($url_parsed_arr['query'], 0, 2) == "v=" && substr($url_parsed_arr['query'], 2) != "") {
-                return true;
-           } else {
-               return false;
-           }
+            $pattern = '/^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
+            return preg_match($pattern, $url);
         }
 
 

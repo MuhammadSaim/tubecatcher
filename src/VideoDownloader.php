@@ -43,7 +43,7 @@ class VideoDownloader
 	public function fetchDownloadLinks($link)
 	{
 		$links = $this->youtube_downloader->getDownloadLinks($link);
-		return json_encode($this->formatUrls($links->getCombinedFormats()));
+		return  $this->formatUrls($links->getCombinedFormats());
 	}
 
 
