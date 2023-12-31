@@ -19,6 +19,7 @@ class VideoDownloader
 {
 
 	private $youtube_downloader;
+	private $youtube_video_url = "https://www.youtube.com/watch?v=";
 
 
 
@@ -40,9 +41,9 @@ class VideoDownloader
 	 * @param  string $link Youtube video url
 	 * @return array       return the formated array of links
 	 */
-	public function fetchDownloadLinks($link)
+	public function fetchDownloadLinks($video_id)
 	{
-		$links = $this->youtube_downloader->getDownloadLinks($link);
+		$links = $this->youtube_downloader->getDownloadLinks($this->youtube_video_url.$video_id);
 		return  $this->formatUrls($links->getCombinedFormats());
 	}
 

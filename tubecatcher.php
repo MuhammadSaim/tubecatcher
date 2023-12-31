@@ -116,11 +116,23 @@ if (!class_exists('TubeCatcher')) {
 
                     try{
 
+                        $video_id = $this->get_youtube_id($_POST["tubecatcher_video_url"]);
+
+                        // check successfully extract the youtube video id
+                        if($video_id == null){
+                            echo json_encode([
+                                "error" => true,
+                                "error_type" => 'field',
+                                "message" => "Please provide a valid YouTube URL."
+                            ]);
+                            wp_die();
+                        }
+
                         // get the video info 
-                        $video_info = $this->youtube_video_info->getInfo($this->get_youtube_id(($_POST["tubecatcher_video_url"])));
+                        $video_info = $this->youtube_video_info->getInfo($video_id);
 
                         // get youtube video downloadable links
-                        $download_links = $this->youtube_downloader->fetchDownloadLinks($_POST["tubecatcher_video_url"]);
+                        $download_links = $this->youtube_downloader->fetchDownloadLinks($video_id);
                         
 
                         // check found any data for the video
@@ -272,11 +284,9 @@ if (!class_exists('TubeCatcher')) {
          */
         public function get_youtube_id($link)
         {
-            preg_match("#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]+(?=\?)|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#", $link, $id);
-            if (!empty($id)) {
-                return $id = $id[0];
-            }
-            return $link;
+            $pattern = '/(?:youtube\.com\/(?:[^\/\n\s]+\/\s*[^\/\n\s]+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
+            preg_match($pattern, $link, $matches);
+            return isset($matches[1]) ? $matches[1] : null;
         }
 
 

@@ -30,6 +30,7 @@ jQuery(document).ready(function ($) {
         $("form[name=tubecatcher-ajax-form] button").html(spinner);
         $("form[name=tubecatcher-ajax-form] input").removeClass("is-invalid");
         $(".tubecatcher-error").html('');
+        $(".tubecatcher-container-info-box").html('');
       },
       success: (data) => {
         $("form[name=tubecatcher-ajax-form] input, form[name=tubecatcher-ajax-form] button").attr("disabled", false);
