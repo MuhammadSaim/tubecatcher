@@ -17,6 +17,7 @@
 
 use TubeCatcher\GetVideoInfo;
 use TubeCatcher\VideoDownloader;
+use YouTube\Exception\VideoNotFoundException;
 
 
 defined('ABSPATH') or die("Hey, you can't access this file, you silly human");
@@ -113,33 +114,45 @@ if (!class_exists('TubeCatcher')) {
                 // now check url is valid youtube url
                 if($this->validateYouTubeUrl($_POST["tubecatcher_video_url"])){
 
+                    try{
 
-                    // get the video info 
-                    $video_info = $this->youtube_video_info->getInfo($this->get_youtube_id(($_POST["tubecatcher_video_url"])));
+                        // get the video info 
+                        $video_info = $this->youtube_video_info->getInfo($this->get_youtube_id(($_POST["tubecatcher_video_url"])));
 
-                    // get youtube video downloadable links
-                    $download_links = $this->youtube_downloader->fetchDownloadLinks($_POST["tubecatcher_video_url"]);
-                    
+                        // get youtube video downloadable links
+                        $download_links = $this->youtube_downloader->fetchDownloadLinks($_POST["tubecatcher_video_url"]);
+                        
 
-                    // check found any data for the video
-                    if(count($video_info) > 0 && count($download_links) > 0){
+                        // check found any data for the video
+                        if(count($video_info) > 0 && count($download_links) > 0){
 
-                        $video_info['download_links'] = $download_links;
+                            $video_info['download_links'] = $download_links;
+
+                            echo json_encode([
+                                "error" => false,
+                                "data"  => $video_info
+                            ]);
+
+                            wp_die();
+
+                        }else{
+                            echo json_encode([
+                                "error" => true,
+                                "error_type" => 'message',
+                                "message" => "Not able to fetch video's details, try another one."
+                            ]);
+                            wp_die();
+                        }
+
+                    }catch(VideoNotFoundException $e){
 
                         echo json_encode([
-                            "error" => false,
-                            "data"  => $video_info
-                        ]);
+                                "error" => true,
+                                "error_type" => 'message',
+                                "message" => "Sorry coudn't find the video"
+                            ]);
+                            wp_die();
 
-                        wp_die();
-
-                    }else{
-                        echo json_encode([
-                            "error" => true,
-                            "error_type" => 'message',
-                            "message" => "Not able to fetch video's details, try another one."
-                        ]);
-                        wp_die();
                     }
 
 
@@ -220,21 +233,19 @@ if (!class_exists('TubeCatcher')) {
             wp_localize_script( 'tubecatcher-script', 'tubecatcher_ajax', [
                 'admin_ajax_url' => admin_url('admin-ajax.php')
             ]);
-
-            $video_data = (new GetVideoInfo())->getInfo($this->get_youtube_id('https://www.youtube.com/watch?v=jADTdg-o8i0'));
-            // var_dump($video_data);
-            // wp_die();
             ?>
 <div class="container tubecatcher-container">
     <div class="card shadow tubecatcher-card">
         <div class="card-body tubecatcher-card-body">
             <div class="card-title tubecatcher-card-title">YouTube video downloader</div>
+            <div class="tubecatcher-error"></div>
             <form name="tubecatcher-ajax-form" method="post" action="" class="tubecatcher-ajax-form">
                 <?php wp_nonce_field( 'tubecatcher_action_nonce', 'tubecatcher_nonce_field' ); ?>
                 <div class="mb-3">
                     <label for="tubecatcher_video_url" class="tubecatcher-form-label">YouTube Link</label>
                     <input type="url" name="tubecatcher_video_url" class="form-control tubecatcher-input"
                         placeholder="https://www.youtube.com/watch?v=jADTdg-o8i0">
+                    <p class="invalid-feedback tubecatcher_video_url_feedback"></p>
                 </div>
                 <div class="mb-3">
                     <button type="submit" class="btn btn-danger tubecatcher-card-btn">Get Video</button>
@@ -243,23 +254,7 @@ if (!class_exists('TubeCatcher')) {
         </div>
     </div>
     <!-- video info box -->
-    <div class="container">
-        <div class="card shodow mt-5 tubecatcher-card-info-box">
-            <div class="row">
-                <div class="col-md-4 col-sm-12">
-                    <img src="<?= $video_data['thumbnail'] ?>" alt="<?= $video_data['title'] ?> thumbnail" class="img-fluid rounded-start tubecatcher-video-image"/>
-                </div>
-                <div class="col-md-8 col-sm-12">
-                    <div class="card-body">
-                        <h5 class="text-break fw-bold"><?= $video_data['title'] ?></h3>
-                        <div class="d-flex align-items-center">
-                            <i class="fab fa-youtube tubecatcher-fa-2x tubecatcher-fa-youtube me-2"></i>
-                            <span class="tubecatcher-channel-name"><?= $video_data['channel_name'] ?></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="tubecatcher-container-info-box">
     </div>
     <!-- end video info box -->
 </div>
