@@ -1,8 +1,15 @@
 jQuery(document).ready(function ($) {
   
 
-  $("body").on("click", ".tubecatcher-card-btn", function (e) {
+  $("body").on("submit", "form[name=tubecatcher-ajax-form]", function (e) {
+    
     e.preventDefault();
+    
+    // get the serialize the data
+    const data = $(this).serializeArray();
+    
+
+    // sending ajax request
     $.ajax({
       url: tubecatcher_ajax.admin_ajax_url,
       method: 'POST',

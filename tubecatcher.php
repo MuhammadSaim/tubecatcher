@@ -126,6 +126,7 @@ if (!class_exists('TubeCatcher')) {
         <div class="card-body tubecatcher-card-body">
             <div class="card-title tubecatcher-card-title">YouTube video downloader</div>
             <form name="tubecatcher-ajax-form" method="post" action="" class="tubecatcher-ajax-form">
+                <?php wp_nonce_field( 'tubecatcher_action_nonce', 'tubecatcher_nonce_field' ); ?>
                 <div class="mb-3">
                     <label for="tubecatcher_video_url" class="tubecatcher-form-label">YouTube Link</label>
                     <input type="url" name="tubecatcher_video_url" class="form-control tubecatcher-input"
