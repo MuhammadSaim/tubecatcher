@@ -45,6 +45,7 @@ if (!class_exists('TubeCatcher')) {
 
         private $youtube_video_info;
         private $youtube_downloader;
+        private $plugin_name;
 
 
         /**
@@ -52,6 +53,28 @@ if (!class_exists('TubeCatcher')) {
          */
         public function __construct()
         {
+
+            // initiate the youtube video info
+            $this->youtube_video_info = new GetVideoInfo();
+
+            // initiate the youtube video downloader
+            $this->youtube_downloader = new VideoDownloader();
+
+            // initiate pluginname
+            $this->plugin_name = plugin_basename( __FILE__ );
+
+        }
+
+
+        /**
+         * register actions and filters
+         * 
+         */
+        public function register()
+        {
+
+            // enqueue scripts
+            add_action("wp_enqueue_scripts", [$this, 'enqueue']);
 
             //shortcode
             add_shortcode('tubecatcher', [$this, 'shortcode']);
@@ -62,15 +85,30 @@ if (!class_exists('TubeCatcher')) {
             // This is for unauthenticated users.
             add_action('wp_ajax_nopriv_tubecathcer_ajax_form_action', [$this, 'tubecatcher_ajax_form']);
 
-
-            // initiate the youtube video info
-            $this->youtube_video_info = new GetVideoInfo();
-
-            // initiate the youtube video downloader
-            $this->youtube_downloader = new VideoDownloader();
-
-
         }
+
+
+        /**
+         *
+         * enqueue all the scripts and the styles
+         * 
+         */
+
+        public function enqueue()
+        {
+            // css
+            wp_enqueue_style('tubecatcher-bootstrap-style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', [], null, 'all');
+            wp_enqueue_style('tubecatcher-fontawesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], null, 'all');
+            wp_enqueue_style('tubecatcher-style', plugins_url('assets/css/style.css', __FILE__), ['tubecatcher-bootstrap-style', 'tubecatcher-fontawesome-style'], null, 'all');
+            // js
+            wp_enqueue_script('tubecatcher-bootstrap-script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', [], true);
+            wp_enqueue_script('tubecatcher-script', plugins_url('assets/js/script.js', __FILE__), ['jquery', 'tubecatcher-bootstrap-script'], true);
+            // wp localization
+            wp_localize_script( 'tubecatcher-script', 'tubecatcher_ajax', [
+                'admin_ajax_url' => admin_url('admin-ajax.php')
+            ]);
+        }
+
 
 
         /**
@@ -233,18 +271,6 @@ if (!class_exists('TubeCatcher')) {
          */
         public function render_shortcode_html($text)
         {
-
-            // css
-            wp_enqueue_style('tubecatcher-bootstrap-style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css', [], null, 'all');
-            wp_enqueue_style('tubecatcher-fontawesome-style', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', [], null, 'all');
-            wp_enqueue_style('tubecatcher-style', plugins_url('assets/css/style.css', __FILE__), ['tubecatcher-bootstrap-style', 'tubecatcher-fontawesome-style'], null, 'all');
-            // js
-            wp_enqueue_script('tubecatcher-bootstrap-script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js', [], true);
-            wp_enqueue_script('tubecatcher-script', plugins_url('assets/js/script.js', __FILE__), ['jquery', 'tubecatcher-bootstrap-script'], true);
-            // wp localization
-            wp_localize_script( 'tubecatcher-script', 'tubecatcher_ajax', [
-                'admin_ajax_url' => admin_url('admin-ajax.php')
-            ]);
             ?>
 <div class="container tubecatcher-container">
     <div class="card shadow tubecatcher-card">
@@ -309,7 +335,7 @@ if (!class_exists('TubeCatcher')) {
 
 
     // initialize the class
-    new TubeCatcher();
-
+    $tubecatcher = new TubeCatcher();
+    $tubecatcher->register();
 
 }// class check if ends here
