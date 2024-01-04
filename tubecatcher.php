@@ -85,7 +85,38 @@ if (!class_exists('TubeCatcher')) {
             // This is for unauthenticated users.
             add_action('wp_ajax_nopriv_tubecathcer_ajax_form_action', [$this, 'tubecatcher_ajax_form']);
 
+            // register menu with hook
+            add_action('admin_init', [$this, 'tubecatcher_register_menu_page']);
+
         }
+
+
+
+        /**
+         *
+         * Admin settings page to show some configurations
+         * 
+         */
+
+        public function tubecatcher_settings_page()
+        {
+            // code...
+        }
+
+
+
+        /**
+         *
+         * A register plugin to add menu or settings pages to WP Admin
+         * 
+         */
+
+        public function tubecatcher_register_menu_page()
+        {
+            // register plugin settings page
+            add_menu_page( 'TubeCatcher Settings', 'TubeCatcher', 'manage_options', 'tubecatcher', [$this, 'tubecatcher_settings_page'], 'dashicons-video-alt3', 30);
+        }
+
 
 
         /**
