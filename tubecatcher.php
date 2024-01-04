@@ -86,7 +86,7 @@ if (!class_exists('TubeCatcher')) {
             add_action('wp_ajax_nopriv_tubecathcer_ajax_form_action', [$this, 'tubecatcher_ajax_form']);
 
             // register menu with hook
-            add_action('admin_init', [$this, 'tubecatcher_register_menu_page']);
+            add_action('admin_menu', [$this, 'tubecatcher_register_menu_page']);
 
         }
 
