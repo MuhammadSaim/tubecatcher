@@ -4,7 +4,7 @@
 /**
  * Plugin Name: TubeCatcher
  * Version: 0.1.0
- * Description: A wordpress plugin to download videos from the youtube.
+ * Description: A WordPress plugin to download videos from the YouTube.
  * Author: Muhammad Saim
  * Author URI: https://muhammadsaim.com
  * Requires PHP: 7.1
@@ -54,13 +54,13 @@ if (!class_exists('TubeCatcher')) {
         public function __construct()
         {
 
-            // initiate the youtube video info
+            // initiate the YouTube video info
             $this->youtube_video_info = new GetVideoInfo();
 
-            // initiate the youtube video downloader
+            // initiate the YouTube video downloader
             $this->youtube_downloader = new VideoDownloader();
 
-            // initiate pluginname
+            // initiate plugin name
             $this->plugin_name = plugin_basename( __FILE__ );
 
         }
@@ -187,7 +187,7 @@ if (!class_exists('TubeCatcher')) {
 
                         $video_id = $this->get_youtube_id($_POST["tubecatcher_video_url"]);
 
-                        // check successfully extract the youtube video id
+                        // check successfully extract the YouTube video id
                         if($video_id == null){
                             echo json_encode([
                                 "error" => true,
@@ -200,7 +200,7 @@ if (!class_exists('TubeCatcher')) {
                         // get the video info 
                         $video_info = $this->youtube_video_info->getInfo($video_id);
 
-                        // get youtube video downloadable links
+                        // get YouTube video downloadable links
                         $download_links = $this->youtube_downloader->fetchDownloadLinks($video_id);
                         
 
@@ -230,7 +230,7 @@ if (!class_exists('TubeCatcher')) {
                         echo json_encode([
                                 "error" => true,
                                 "error_type" => 'message',
-                                "message" => "Sorry coudn't find the video"
+                                "message" => "Sorry couldn't find the video"
                             ]);
                             wp_die();
 
@@ -312,8 +312,8 @@ if (!class_exists('TubeCatcher')) {
                 <?php wp_nonce_field( 'tubecatcher_action_nonce', 'tubecatcher_nonce_field' ); ?>
                 <div class="mb-3">
                     <label for="tubecatcher_video_url" class="tubecatcher-form-label">YouTube Link</label>
-                    <input type="url" name="tubecatcher_video_url" class="form-control tubecatcher-input"
-                        placeholder="https://www.youtube.com/watch?v=jADTdg-o8i0">
+                    <input type="url" id="tubecatcher_video_url" name="tubecatcher_video_url" class="form-control tubecatcher-input"
+                        placeholder="https://www.youtube.com/watch?v=jADTdg-o8i0" />
                     <p class="invalid-feedback tubecatcher_video_url_feedback"></p>
                 </div>
                 <div class="mb-3">
@@ -331,13 +331,11 @@ if (!class_exists('TubeCatcher')) {
         }
 
 
-
-
         /**
-         * extract youtube video id from the youtube vide URL
+         * extract YouTube video id from the YouTube vide URL
          *
          * @param $link
-         * @return void
+         * @return string|null
          */
         public function get_youtube_id($link)
         {
@@ -349,10 +347,10 @@ if (!class_exists('TubeCatcher')) {
 
         /**
          * 
-         * check the given url is valid youtube url or not
+         * check the given url is valid YouTube url or not
          * 
-         * @param  $url youtube url
-         * @return True if valid otherwise false
+         * @param  $url YouTube url
+         * @return false|int if valid otherwise false
          * 
          */
         public function validateYouTubeUrl($url)

@@ -49,14 +49,13 @@ class GetVideoInfo {
 	}
 
 
-
-	/**
-	 *
-	 * fetch the detail from response body and structure into an array
-	 * 
-	 * @param  $body 
-	 * @return $array
-	 */
+    /**
+     *
+     * fetch the detail from response body and structure into an array
+     *
+     * @param  $body
+     * @return array $array
+     */
 	private function fetchAndFormatDetails($body)
 	{
 		if($body != null){

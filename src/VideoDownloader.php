@@ -4,6 +4,9 @@
 namespace TubeCatcher;
 
 
+use YouTube\Exception\TooManyRequestsException;
+use YouTube\Exception\VideoNotFoundException;
+use YouTube\Exception\YouTubeException;
 use YouTube\YouTubeDownloader;
 
 
@@ -11,7 +14,7 @@ use YouTube\YouTubeDownloader;
  *
  * @author Muhammad Saim
  *
- * A wrapper class to download youtube videos and infos
+ * A wrapper class to download YouTube videos and infos
  * 
  */
 
@@ -25,7 +28,7 @@ class VideoDownloader
 
 	/**
 	 *
-	 * initiate the youtube downloader
+	 * initiate the YouTube downloader
 	 * 
 	 */
 	public function __construct()
@@ -34,13 +37,16 @@ class VideoDownloader
 	}
 
 
-	/**
-	 *
-	 * fetch the download links from the page link
-	 * 
-	 * @param  string $link Youtube video url
-	 * @return array       return the formated array of links
-	 */
+    /**
+     *
+     * fetch the download links from the page link
+     *
+     * @param $video_id
+     * @return array       return the formatted array of links
+     * @throws TooManyRequestsException
+     * @throws VideoNotFoundException
+     * @throws YouTubeException
+     */
 	public function fetchDownloadLinks($video_id)
 	{
 		$links = $this->youtube_downloader->getDownloadLinks($this->youtube_video_url.$video_id);
@@ -52,7 +58,7 @@ class VideoDownloader
 	 *
 	 * format the urls
 	 *
-	 * @param array unformated array
+	 * @param array $videos unformated array
 	 * 
 	 * 
 	 */
